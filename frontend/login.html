@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="light">
+  <meta name="theme-color" content="#0B132B">
+  <meta name="description" content="تسجيل الدخول أو إنشاء حساب جديد في متجر TechGadget لحفظ المفضلة واسترجاع الحساب.">
+  <title>الحساب | TechGadget</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230EA5E9'/%3E%3Crect x='30' y='18' width='40' height='64' rx='10' fill='%23fff'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page-title="تسجيل الدخول">
+
+  <div class="auth-shell">
+    <div class="auth-card rise">
+
+      <h1 class="auth-card__brand">
+        <span class="logo__mark" aria-hidden="true">📱</span>
+        <span>Phone Store</span>
+      </h1>
+      <p class="auth-card__sub">سجّل الدخول لحفظ أجهزتك في المفضلة، أو أنشئ حساباً جديداً في أقل من دقيقة.</p>
+
+      <div class="notice notice--ok hidden" id="alreadyLoggedIn" role="status"></div>
+
+      <div class="notice hidden" id="recoveryNotice" role="status" style="margin-bottom:16px"></div>
+
+      <div class="auth-tabs" role="tablist" aria-label="اختر العملية">
+        <button type="button" id="tabLogin" class="is-active" role="tab" aria-selected="true" data-panel="login">دخول</button>
+        <button type="button" id="tabRegister" role="tab" aria-selected="false" data-panel="register">حساب جديد</button>
+      </div>
+
+      <!-- ------------------------- تسجيل الدخول ------------------------ -->
+      <form id="panel-login" autocomplete="on">
+        <div class="field">
+          <label class="field__label" for="loginUsername">اسم المستخدم</label>
+          <input class="input" id="loginUsername" name="username" type="text" inputmode="latin"
+                 autocomplete="username" spellcheck="false" maxlength="15" required
+                 placeholder="مثال: ameer_01">
+          <p class="field__hint">أحرف إنجليزية صغيرة وأرقام و _ و . — من 4 إلى 15 رمزاً.</p>
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="loginPassKey">مفتاح المرور</label>
+          <input class="input" id="loginPassKey" name="pass_key" type="password"
+                 autocomplete="current-password" spellcheck="false" maxlength="16" required
+                 placeholder="16 رمزاً">
+        </div>
+
+        <button class="btn btn--primary btn--block" type="submit" id="loginSubmit">دخول</button>
+
+        <div class="auth-foot">
+          <button class="link-btn" type="button" id="forgotLink">نسيت مفتاح المرور؟ استرجاع الحساب</button>
+        </div>
+      </form>
+
+      <!-- -------------------------- إنشاء حساب ------------------------- -->
+      <form id="panel-register" class="hidden" autocomplete="on">
+        <div class="field">
+          <label class="field__label" for="regName">الاسم الكامل</label>
+          <input class="input" id="regName" name="name" type="text" autocomplete="name"
+                 maxlength="25" required placeholder="مثال: أمير سعيد">
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="regUsername">اسم المستخدم</label>
+          <input class="input" id="regUsername" name="username" type="text" inputmode="latin"
+                 autocomplete="username" spellcheck="false" maxlength="15" required placeholder="مثال: ameer_01">
+        </div>
+
+        <div class="field">
+          <div class="field__label">
+            <label for="regPassKey">مفتاح المرور</label>
+            <button class="link-btn" type="button" id="regGenerate">توليد عشوائي</button>
+          </div>
+          <input class="input" id="regPassKey" name="pass_key" type="password"
+                 autocomplete="new-password" spellcheck="false" maxlength="16" required
+                 placeholder="16 رمزاً، حرف واحد ورقم واحد على الأقل">
+          <div id="regStrength"></div>
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="regRecoveryCode">كود الاسترجاع</label>
+          <input class="input" id="regRecoveryCode" name="recovery_code" type="password"
+                 autocomplete="off" spellcheck="false" maxlength="64" required
+                 placeholder="كود طوارئ خاص بك">
+          <p class="field__hint">
+            الوسيلة الوحيدة لاسترجاع الحساب لو نسيت مفتاح المرور.
+            لن نعرضه لك بعد هذه الصفحة، فاحفظه في مكان آمن.
+          </p>
+        </div>
+
+        <button class="btn btn--primary btn--block" type="submit" id="registerSubmit">إنشاء الحساب</button>
+      </form>
+
+      <!-- -------------------------- الاسترجاع -------------------------- -->
+      <div id="panel-recovery" class="hidden">
+        <form id="formRecoveryVerify">
+          <h3 style="margin-bottom:6px">استرجاع الحساب — الخطوة 1 من 2</h3>
+          <p class="field__hint" style="margin-bottom:16px">أدخل اسم المستخدم مع كود الاسترجاع الذي حفظته عند إنشاء الحساب.</p>
+
+          <div class="field">
+            <label class="field__label" for="recUsername">اسم المستخدم</label>
+            <input class="input" id="recUsername" type="text" inputmode="latin"
+                   autocomplete="username" spellcheck="false" maxlength="15" required placeholder="ameer_01">
+          </div>
+
+          <div class="field">
+            <label class="field__label" for="recCode">كود الاسترجاع</label>
+            <input class="input" id="recCode" type="password"
+                   autocomplete="off" spellcheck="false" maxlength="64" required placeholder="كود الطوارئ">
+          </div>
+
+          <button class="btn btn--primary btn--block" type="submit" id="recoveryVerifyBtn">تحقّق من الكود</button>
+        </form>
+
+        <form id="formRecoveryReset" class="hidden" style="margin-top:4px">
+          <h3 style="margin-bottom:6px">الخطوة 2 من 2 — بيانات جديدة</h3>
+          <p class="field__hint" style="margin-bottom:16px">اختر مفتاح مرور جديداً وكود استرجاع جديد. الكود القديم يصبح غير صالح.</p>
+
+          <div class="field">
+            <div class="field__label">
+              <label for="resetPassKey">مفتاح المرور الجديد</label>
+            </div>
+            <input class="input" id="resetPassKey" type="password"
+                   autocomplete="new-password" spellcheck="false" maxlength="16" required placeholder="16 رمزاً">
+            <div id="resetStrength"></div>
+          </div>
+
+          <div class="field">
+            <div class="field__label">
+              <label for="newRecoveryCode">كود الاسترجاع الجديد</label>
+              <button class="link-btn" type="button" id="resetGenerate">توليد عشوائي</button>
+            </div>
+            <input class="input" id="newRecoveryCode" type="password"
+                   autocomplete="off" spellcheck="false" maxlength="64" required placeholder="كود طوارئ جديد">
+          </div>
+
+          <button class="btn btn--primary btn--block" type="submit" id="recoveryResetBtn">احفظ البيانات الجديدة</button>
+        </form>
+
+        <div class="auth-foot">
+          <a class="link-btn" href="login.html" id="toLoginLink">← العودة لتسجيل الدخول</a>
+        </div>
+      </div>
+
+      <p class="field__hint" style="margin-top:18px;text-align:center">
+        <a href="index.html">العودة للمتجر بدون تسجيل</a>
+      </p>
+    </div>
+  </div>
+
+  <script src="js/core.js" defer></script>
+  <script src="js/login.js" defer></script>
+</body>
+</html>

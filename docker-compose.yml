@@ -1,0 +1,58 @@
+services:
+  db:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASS:?ضع كلمة مرور الجذر في .env}
+      MYSQL_DATABASE: ${DB_NAME:-Ageel_phone}
+      MYSQL_USER: ${DB_USER:?ضع اسم مستخدم قاعدة البيانات في .env}
+      MYSQL_PASSWORD: ${DB_PASS:?ضع كلمة مرور قاعدة البيانات في .env}
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - db_data:/var/lib/mysql
+    ports:
+      - "127.0.0.1:3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-u", "root", "-p${DB_ROOT_PASS}"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: 5000
+      TRUST_PROXY: "true"
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_NAME: ${DB_NAME:-Ageel_phone}
+      DB_USER: ${DB_USER}
+      DB_PASS: ${DB_PASS}
+      DB_SSL: "false"
+      DB_SYNC: ${DB_SYNC:-true}
+      JWT_SECRET: ${JWT_SECRET:?ضع JWT_SECRET طويل وعشوائي في .env}
+      RECOVERY_JWT_SECRET: ${RECOVERY_JWT_SECRET:?ضع RECOVERY_JWT_SECRET طويل وعشوائي في .env}
+      TOKEN_EXPIRES_IN: ${TOKEN_EXPIRES_IN:-1d}
+      BCRYPT_ROUNDS: ${BCRYPT_ROUNDS:-12}
+      CORS_ORIGINS: ${CORS_ORIGINS:-}
+      RATE_LIMIT_API_MAX: ${RATE_LIMIT_API_MAX:-300}
+      RATE_LIMIT_LOGIN_MAX: ${RATE_LIMIT_LOGIN_MAX:-8}
+      BODY_LIMIT: ${BODY_LIMIT:-32kb}
+      STORE_NAME: ${STORE_NAME:-TechGadget}
+      TELEGRAM_USERNAME: ${TELEGRAM_USERNAME:-}
+      SUPPORT_EMAIL: ${SUPPORT_EMAIL:-}
+    ports:
+      - "${APP_PORT:-5000}:5000"
+
+volumes:
+  db_data:

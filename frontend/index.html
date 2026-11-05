@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="light">
+  <meta name="theme-color" content="#0B132B">
+  <meta name="description" content="Phone Store — متجر الأجهزة الذكية الجديدة والمستعملة بأفضل الأسعار، مع الطلب المباشر عبر تليجرام.">
+  <title>Phone Store | متجر الأجهزة</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230EA5E9'/%3E%3Crect x='30' y='18' width='40' height='64' rx='10' fill='%23fff'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page-title="متجر الأجهزة">
+
+  <a class="skip-link" href="#mainContent">تخطّي إلى المحتوى</a>
+
+  <header class="navbar" aria-label="الشريط العلوي"></header>
+
+  <noscript>
+    <div class="container">
+      <p class="notice notice--warn" style="margin-top:14px">هذه الصفحة تحتاج JavaScript لعرض الأجهزة وإتمام الطلب.</p>
+      <ul>
+        <li><a href="index.html">الرئيسية</a></li>
+        <li><a href="favorites.html">المفضلة</a></li>
+        <li><a href="login.html">تسجيل الدخول</a></li>
+      </ul>
+    </div>
+  </noscript>
+
+  <main class="main" id="mainContent">
+
+    <!-- ---------------------------- البانر ---------------------------- -->
+    <section class="hero" aria-labelledby="heroTitle">
+      <div class="container">
+        <div class="hero__card rise">
+          <div class="hero__text">
+            <span class="hero__eyebrow">
+              <span aria-hidden="true">⚡</span>
+              تحديث يومي للأسعار
+            </span>
+            <h1 class="hero__title" id="heroTitle">
+              أجهزة جديدة ومستعملة <span>مضمونة</span> بأفضل سعر في العراق
+            </h1>
+            <p class="hero__lead">
+              تصفّح القائمة، أضف ما يعجبك إلى المفضلة، ثم أرسل طلبك مباشرة عبر تليجرام.
+              بدون حساب بنكي وبدون تعقيد — تتفق على السعر والتسليم مع الإدارة.
+            </p>
+            <div class="hero__actions">
+              <a class="btn btn--primary" href="#new-devices">تصفّح الأجهزة الجديدة</a>
+              <a class="btn btn--ghost" href="#used-devices">الأجهزة المستعملة</a>
+            </div>
+            <div class="hero__stats">
+              <div class="hero__stat"><strong data-stat="new">—</strong><span>جهاز جديد</span></div>
+              <div class="hero__stat"><strong data-stat="used">—</strong><span>جهاز مستعمل</span></div>
+              <div class="hero__stat"><strong data-stat="total">—</strong><span>إجمالي المعروض</span></div>
+            </div>
+          </div>
+          <div class="hero__image-wrap">
+            <img class="hero__img-float" src="photo.jpg" alt="مجموعة من الهواتف والأجهزة الذكية المعروضة في المتجر" width="340" height="260" fetchpriority="high">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- --------------------- شريط البحث والفلترة --------------------- -->
+    <div class="toolbar">
+      <div class="container" id="catalogToolbar" aria-label="أدوات تصفية الأجهزة"></div>
+    </div>
+
+    <!-- --------------------------- الأجهزة --------------------------- -->
+    <div class="container">
+      <section id="new-devices" class="section" aria-labelledby="newTitle">
+        <div class="section__head">
+          <div>
+            <h2 id="newTitle">أحدث الهواتف والأجهزة الجديدة</h2>
+            <p class="section__sub">مغلفة أو بحالة الجديد مع ضمان.</p>
+          </div>
+          <a class="btn btn--ghost btn--sm" href="#used-devices">انتقل للمستعملة ↓</a>
+        </div>
+        <div id="new-products-grid" class="products" aria-live="polite"></div>
+        <p style="text-align:center;margin-top:18px">
+          <button type="button" class="btn btn--ghost btn--sm hidden" id="new-more"></button>
+        </p>
+      </section>
+
+      <section id="used-devices" class="section" aria-labelledby="usedTitle">
+        <div class="section__head">
+          <div>
+            <h2 id="usedTitle">الأجهزة المستعملة</h2>
+            <p class="section__sub">افُحصت يدوياً وجاهزة للاستخدام الفوري.</p>
+          </div>
+          <a class="btn btn--ghost btn--sm" href="#new-devices">انتقل للجديدة ↑</a>
+        </div>
+        <div id="used-products-grid" class="products" aria-live="polite"></div>
+        <p style="text-align:center;margin-top:18px">
+          <button type="button" class="btn btn--ghost btn--sm hidden" id="used-more"></button>
+        </p>
+      </section>
+    </div>
+  </main>
+
+  <!-- ----------------------------- الفوتر ----------------------------- -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__grid">
+        <div>
+          <h4>Phone Store</h4>
+          <p>متجر متخصص بأحدث الهواتف والأجهزة الذكية، جديدة ومستعملة، مع تسليم داخل العراق وطلب مباشر عبر تليجرام.</p>
+        </div>
+        <div>
+          <h4>روابط سريعة</h4>
+          <ul>
+            <li><a href="index.html">الرئيسية</a></li>
+            <li><a href="index.html#new-devices">أجهزة جديدة</a></li>
+            <li><a href="index.html#used-devices">أجهزة مستعملة</a></li>
+            <li><a href="favorites.html">المفضلة</a></li>
+            <li><a href="login.html?mode=register">حساب جديد</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>الطلب والدعم</h4>
+          <ul>
+            <li><a href="https://t.me/" id="footerTelegram" target="_blank" rel="noopener">💬 التواصل عبر تليجرام</a></li>
+            <li><a href="login.html">🔑 استرجاع الحساب</a></li>
+          </ul>
+          <p>نرد على الرسائل يومياً من 10 صباحاً حتى 10 مساءً.</p>
+        </div>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <div class="container">
+        <p>© <span id="year">2026</span> Phone Store — جميع الحقوق محفوظة.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/core.js" defer></script>
+  <script src="js/home.js" defer></script>
+</body>
+</html>

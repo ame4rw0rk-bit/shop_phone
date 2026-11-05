@@ -1,0 +1,17 @@
+**/node_modules
+**/.env
+**/.env.*
+!**/.env.example
+**/*.log
+**/logs
+**/tmp
+**/.git
+**/.gitignore
+**/.idea
+**/.vscode
+**/Thumbs.db
+**/.DS_Store
+README.md
+docker-compose.yml
+Dockerfile
+.dockerignore

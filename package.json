@@ -1,0 +1,20 @@
+{
+  "name": "techgadget-store",
+  "version": "1.0.0",
+  "private": true,
+  "description": "متجر TechGadget — الواجهة والـ API (انظر README.md)",
+  "scripts": {
+    "install:backend": "npm --prefix backend install",
+    "dev": "npm --prefix backend run dev",
+    "start": "npm --prefix backend start",
+    "smoke": "npm --prefix backend run smoke",
+    "db:repair": "npm --prefix backend run db:repair",
+    "seed:admin": "npm --prefix backend run seed:admin",
+    "seed:demo": "node backend/scripts/seed-demo-products.js",
+    "seed:demo:clear": "node backend/scripts/seed-demo-products.js --clear"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "UNLICENSED"
+}

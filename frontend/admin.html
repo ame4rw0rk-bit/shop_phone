@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="light">
+  <meta name="theme-color" content="#0B132B">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="description" content="لوحة تحكم TechGadget لإدارة الأجهزة المعروضة في المتجر.">
+  <title>لوحة التحكم | TechGadget</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%236366F1'/%3E%3Crect x='30' y='18' width='40' height='64' rx='10' fill='%23fff'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page-title="لوحة التحكم">
+
+  <a class="skip-link" href="#mainContent">تخطّي إلى المحتوى</a>
+
+  <header class="navbar" aria-label="الشريط العلوي"></header>
+
+  <main class="main" id="mainContent">
+    <div class="container">
+
+      <div class="admin-head">
+        <div>
+          <h1>لوحة تحكم الأجهزة</h1>
+          <p class="section__sub">
+            أنت مسجّل الدخول كـ <strong id="adminWho">…</strong> — كل تعديل يظهر للزوار فوراً.
+          </p>
+        </div>
+        <div class="hero__actions">
+          <button type="button" class="btn btn--ghost btn--sm" id="reloadBtn">تحديث القائمة ↻</button>
+          <a class="btn btn--soft btn--sm" href="index.html" target="_blank" rel="noopener">معاينة المتجر ↗</a>
+        </div>
+      </div>
+
+      <!-- ----------------------------- الإحصاءات -------------------------- -->
+      <div class="stat-grid" style="margin-bottom:clamp(16px,2.4vw,24px)">
+        <div class="stat stat--brand">
+          <span class="stat__value" data-stat="total">—</span>
+          <span class="stat__label">إجمالي الأجهزة</span>
+        </div>
+        <div class="stat stat--ok">
+          <span class="stat__value" data-stat="new">—</span>
+          <span class="stat__label">أجهزة جديدة</span>
+        </div>
+        <div class="stat stat--warn">
+          <span class="stat__value" data-stat="used">—</span>
+          <span class="stat__label">أجهزة مستعملة</span>
+        </div>
+        <div class="stat">
+          <span class="stat__value" data-stat="out">—</span>
+          <span class="stat__label">غير متوفرة</span>
+        </div>
+      </div>
+
+      <div class="admin-layout">
+
+        <!-- ------------------------ نموذج الجهاز ------------------------ -->
+        <section class="card" aria-labelledby="formTitle">
+          <div class="card__title">
+            <h2 id="formTitle">
+              <span id="formModeLabel">إضافة جهاز جديد</span>
+            </h2>
+          </div>
+
+          <form id="productForm" novalidate>
+            <div class="field">
+              <label class="field__label" for="fTitle">اسم الجهاز</label>
+              <input class="input" id="fTitle" name="title" type="text" maxlength="140" required
+                     placeholder="مثال: iPhone 15 Pro 256GB">
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="fPrice">السعر بالدولار</label>
+              <input class="input" id="fPrice" name="price" type="number" min="0" max="10000000"
+                     step="0.01" inputmode="decimal" required placeholder="999">
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="fCondition">الحالة</label>
+              <select class="select" id="fCondition" name="condition">
+                <option value="new">جديد</option>
+                <option value="used">مستعمل</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="fInStock">التوفر</label>
+              <select class="select" id="fInStock" name="inStock">
+                <option value="true">متوفر</option>
+                <option value="false">غير متوفر</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="fImageUrl">رابط الصورة</label>
+              <input class="input" id="fImageUrl" name="imageUrl" type="url" maxlength="500"
+                     spellcheck="false" placeholder="https://example.com/phone.jpg">
+              <p class="field__hint">رابط https مباشر لصورة الجهاز. اتركه فارغاً لتظهر الصورة الافتراضية.</p>
+              <div class="preview" id="imagePreview"></div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="fDescription">الوصف والمواصفات</label>
+              <textarea class="textarea" id="fDescription" name="description" maxlength="5000"
+                        placeholder="الذاكرة، حالة البطارية، الملحقات، الضمان…"></textarea>
+            </div>
+
+            <div class="modal__actions" style="margin-top:6px">
+              <button class="btn btn--primary" type="submit" id="saveProductBtn">حفظ الجهاز</button>
+              <button class="btn btn--ghost hidden" type="button" id="cancelEditBtn">إلغاء التعديل</button>
+            </div>
+          </form>
+        </section>
+
+        <!-- --------------------------- الجدول --------------------------- -->
+        <section class="card" aria-labelledby="tableTitle">
+          <div class="card__title">
+            <h2 id="tableTitle">الأجهزة المعروضة <span class="badge" id="adminCount">0</span></h2>
+            <div class="tabs" role="tablist" aria-label="تصفية حسب الحالة">
+              <button type="button" class="tab is-active" data-filter="all">الكل</button>
+              <button type="button" class="tab" data-filter="new">جديد</button>
+              <button type="button" class="tab" data-filter="used">مستعمل</button>
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="sr-only" for="adminSearch">بحث في الأجهزة</label>
+            <input class="input" id="adminSearch" type="search" placeholder="ابحث بالاسم أو الوصف…" maxlength="60">
+          </div>
+
+          <div class="table-wrap">
+            <table class="table table--responsive">
+              <thead>
+                <tr>
+                  <th scope="col">الصورة</th>
+                  <th scope="col">الجهاز</th>
+                  <th scope="col">السعر</th>
+                  <th scope="col">الحالة</th>
+                  <th scope="col">التوفر</th>
+                  <th scope="col">إجراءات</th>
+                </tr>
+              </thead>
+              <tbody id="productsBody"></tbody>
+            </table>
+          </div>
+
+          <p class="field__hint" style="margin-top:14px">
+            حذف جهاز يزيله أيضاً من قوائم مفضلة الزوار. البيانات تُحفظ في قاعدة البيانات مباشرة.
+          </p>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer__bottom">
+      <div class="container">
+        <p>© <span id="year">2026</span> TechGadget — لوحة الإدارة.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/core.js" defer></script>
+  <script src="js/admin.js" defer></script>
+</body>
+</html>

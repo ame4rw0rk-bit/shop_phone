@@ -1,0 +1,34 @@
+# الاعتماديات
+node_modules/
+npm-debug.log*
+yarn-error.log*
+
+# الأسرار — لا تُرفع أبداً
+.env
+.env.*
+!.env.example
+backend/.env
+backend/.env.*
+!backend/.env.example
+
+# سجلات التشغيل وملفات مؤقتة
+logs/
+*.log
+tmp/
+temp/
+.DS_Store
+Thumbs.db
+
+# مخرجات الاختبارات والتغطية
+coverage/
+.nyc_output/
+
+# كود قديم محفوظ للمراجعة اليدوية فقط
+.legacy/
+
+# بيئات محلية
+venv/
+.venv/
+.idea/
+.vscode/
+*.swp
