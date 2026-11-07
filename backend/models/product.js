@@ -17,9 +17,9 @@ const Product = sequelize.define('Product', {
     allowNull: true
   },
   price: {
-    type: DataTypes.FLOAT,
+    type: DataTypes.STRING(50),
     allowNull: false,
-    validate: { min: 0 }
+    defaultValue: '0'
   },
   imageUrl: {
     type: DataTypes.STRING(500),

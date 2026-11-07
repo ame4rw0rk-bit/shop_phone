@@ -218,10 +218,10 @@
     const button = event.submitter || $('#saveProductBtn');
     
     const title = $(FIELDS.title).value.trim();
-    const price = $(FIELDS.price).value;
+    const price = $(FIELDS.price).value.trim();
     
     if (title.length < 2) { toast('اسم الجهاز قصير جداً.', 'error'); return; }
-    if (price === '' || Number(price) < 0) { toast('حدّد سعراً صحيحاً.', 'error'); return; }
+    if (!price) { toast('أدخل السعر.', 'error'); return; }
     
     button.disabled = true;
     

@@ -11,6 +11,7 @@
     "start": "node app.js",
     "dev": "nodemon app.js",
     "db:repair": "node scripts/repair-indexes.js",
+    "db:migrate-price": "node scripts/migrate-price.js",
     "seed:admin": "node scripts/seed-admin.js",
     "smoke": "node scripts/smoke-test.js"
   },

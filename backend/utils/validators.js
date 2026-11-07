@@ -33,13 +33,10 @@ function optionalString(body, field, { max = 500, allowEmpty = true } = {}) {
 }
 
 function parsePrice(value) {
-  const raw = typeof value === 'string' ? value.replace(/[,_\s]/g, '') : value;
-  const price = Number(raw);
-  // الأسعار بالدينار العراقي ممكن توصل لملايين (مثلاً 50,000,000)
-  if (!Number.isFinite(price) || price < 0 || price > 100_000_000) {
-    throw ApiError.badRequest('السعر يجب أن يكون رقماً موجباً');
-  }
-  return Math.round(price);
+  // السعر الآن نص حر - يقبل أي شي
+  const raw = typeof value === 'string' ? value.trim() : String(value || '');
+  if (!raw) return '0';
+  return raw;
 }
 
 function parseBoolean(value, fallback = true) {

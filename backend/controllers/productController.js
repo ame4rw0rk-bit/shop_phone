@@ -28,7 +28,7 @@ function readProductPayload(body) {
 
 function serialize(product) {
   const data = product.get({ plain: true });
-  return { ...data, price: Number(data.price) };
+  return { ...data, price: String(data.price || '0') };
 }
 
 exports.getAll = async (req, res) => {

@@ -34,15 +34,14 @@
   const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
 
   const money = (value) => {
-    const amount = Number(value);
-    if (!Number.isFinite(amount)) return '—';
-    // تنسيق الأرقام بالدينار العراقي مع فارزة الآلاف
-    return amount.toLocaleString('en-US', { maximumFractionDigits: 0 });
+    // السعر الآن نص حر - نرجعه كما هو
+    return String(value || '0');
   };
 
   // دالة مساعدة لعرض السعر بالصيغة الكاملة
   const formatPrice = (value) => {
-    return `${money(value)} د.ع`;
+    // نرجع النص كما هو بدون تنسيق
+    return String(value || '0');
   };
 
   const PLACEHOLDER_IMAGE = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(
