@@ -638,11 +638,8 @@
 
     const year = $('.footer #year');
     if (year) year.textContent = String(new Date().getFullYear());
-    const telegramLink = $('#footerTelegram');
-    if (telegramLink && App.store.config.telegramUsername) {
-      telegramLink.href = `https://t.me/${App.store.config.telegramUsername.replace(/^@/, '')}`;
-    }
-    if (telegramLink && !App.store.config.telegramUsername) telegramLink.classList.add('hidden');
+    // رابط "الطلب والدعم" في الفوتر ثابت من index.html (يوزر الدعم) — لا يُكتب فوقه من إعدادات السيرفر.
+    // يوزر الطلبات (أزرار "اطلب عبر تليجرام") يبقى من config.telegramUsername.
 
     mountChrome(options);
     await syncFavoriteIds();
