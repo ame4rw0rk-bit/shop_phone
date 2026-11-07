@@ -43,9 +43,10 @@ function validateName(name) {
 function validateRecoveryCode(code) {
   return requireString({ code }, 'code', {
     label: 'كود الاسترجاع',
-    min: 6,
-    max: 64,
-    patternError: 'كود الاسترجاع غير صالح'
+    min: 8,
+    max: 20,
+    pattern: /^\S+$/, // بدون فراغات
+    patternError: 'كود الاسترجاع يجب ألا يحتوي على فراغات'
   });
 }
 

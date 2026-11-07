@@ -35,10 +35,11 @@ function optionalString(body, field, { max = 500, allowEmpty = true } = {}) {
 function parsePrice(value) {
   const raw = typeof value === 'string' ? value.replace(/[,_\s]/g, '') : value;
   const price = Number(raw);
-  if (!Number.isFinite(price) || price < 0 || price > 10_000_000) {
+  // الأسعار بالدينار العراقي ممكن توصل لملايين (مثلاً 50,000,000)
+  if (!Number.isFinite(price) || price < 0 || price > 100_000_000) {
     throw ApiError.badRequest('السعر يجب أن يكون رقماً موجباً');
   }
-  return Math.round(price * 100) / 100;
+  return Math.round(price);
 }
 
 function parseBoolean(value, fallback = true) {
@@ -59,7 +60,19 @@ function parseId(value, label = 'المعرّف') {
 function parseImageUrl(value) {
   const url = str(value);
   if (!url) return null;
-  if (!URL_RE.test(url)) throw ApiError.badRequest('رابط الصورة يجب أن يبدأ بـ http:// أو https://');
+  
+  // السماح بروابط الصور المحلية المرفوعة
+  if (url.startsWith('/uploads/')) {
+    // تحقق أن الاسم آمن
+    const filename = url.replace('/uploads/', '');
+    if (!/^[a-f0-9]+\.(jpg|jpeg|png|webp|gif|bmp)$/i.test(filename)) {
+      throw ApiError.badRequest('اسم الملف غير صالح');
+    }
+    return url;
+  }
+  
+  // السماح بالروابط الخارجية
+  if (!URL_RE.test(url)) throw ApiError.badRequest('رابط الصورة يجب أن يبدأ بـ http://或 https:// أو يكون من الصور المرفوعة');
 
   let host;
   try {

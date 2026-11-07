@@ -123,3 +123,17 @@ exports.stats = async (req, res) => {
   ]);
   res.json({ total, newCount, usedCount, outOfStock });
 };
+
+exports.uploadImage = async (req, res) => {
+  if (!req.file) {
+    throw ApiError.badRequest('لم يتم رفع أي صورة');
+  }
+  
+  // إرجاع رابط الصورة المرفوعة
+  const imageUrl = `/uploads/${req.file.filename}`;
+  
+  res.json({
+    message: 'تم رفع الصورة بنجاح',
+    imageUrl
+  });
+};

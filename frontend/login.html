@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="color-scheme" content="light">
+  <meta name="color-scheme" content="light dark">
   <meta name="theme-color" content="#0B132B">
   <meta name="description" content="تسجيل الدخول أو إنشاء حساب جديد في متجر TechGadget لحفظ المفضلة واسترجاع الحساب.">
   <title>الحساب | TechGadget</title>
@@ -82,10 +82,11 @@
         <div class="field">
           <label class="field__label" for="regRecoveryCode">كود الاسترجاع</label>
           <input class="input" id="regRecoveryCode" name="recovery_code" type="password"
-                 autocomplete="off" spellcheck="false" maxlength="64" required
-                 placeholder="كود طوارئ خاص بك">
+                 autocomplete="off" spellcheck="false" minlength="8" maxlength="20" required
+                 placeholder="8-20 حرفاً بدون فراغات">
           <p class="field__hint">
             الوسيلة الوحيدة لاسترجاع الحساب لو نسيت مفتاح المرور.
+            اختر شيئاً تتذكره — من 8 إلى 20 حرفاً بدون فراغات.
             لن نعرضه لك بعد هذه الصفحة، فاحفظه في مكان آمن.
           </p>
         </div>
@@ -108,7 +109,7 @@
           <div class="field">
             <label class="field__label" for="recCode">كود الاسترجاع</label>
             <input class="input" id="recCode" type="password"
-                   autocomplete="off" spellcheck="false" maxlength="64" required placeholder="كود الطوارئ">
+                   autocomplete="off" spellcheck="false" minlength="8" maxlength="20" required placeholder="كود الطوارئ">
           </div>
 
           <button class="btn btn--primary btn--block" type="submit" id="recoveryVerifyBtn">تحقّق من الكود</button>
@@ -133,7 +134,7 @@
               <button class="link-btn" type="button" id="resetGenerate">توليد عشوائي</button>
             </div>
             <input class="input" id="newRecoveryCode" type="password"
-                   autocomplete="off" spellcheck="false" maxlength="64" required placeholder="كود طوارئ جديد">
+                   autocomplete="off" spellcheck="false" minlength="8" maxlength="20" required placeholder="كود طوارئ جديد (8-20 حرفاً)">
           </div>
 
           <button class="btn btn--primary btn--block" type="submit" id="recoveryResetBtn">احفظ البيانات الجديدة</button>

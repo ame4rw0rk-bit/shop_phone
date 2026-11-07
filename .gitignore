@@ -11,6 +11,10 @@ backend/.env
 backend/.env.*
 !backend/.env.example
 
+# الصور المرفوعة
+backend/uploads/
+!backend/uploads/.gitkeep
+
 # سجلات التشغيل وملفات مؤقتة
 logs/
 *.log

@@ -3,6 +3,16 @@ const crypto = require('crypto');
 
 require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
 
+// Debug: Check which Railway env vars are present (without revealing values)
+const REQUIRED_VARS = ['DB_HOST', 'DB_PORT', 'DB_NAME', 'DB_USER', 'DB_PASS', 'JWT_SECRET', 'RECOVERY_JWT_SECRET'];
+const missingVars = REQUIRED_VARS.filter(v => !process.env[v]);
+if (missingVars.length > 0) {
+  console.error('❌ Railway environment variables missing:', missingVars.join(', '));
+  console.error('⚠️  Make sure all variables are set in Railway dashboard and redeploy.');
+} else {
+  console.log('✅ All required Railway environment variables are present');
+}
+
 const NODE_ENV = process.env.NODE_ENV || 'development';
 const isProduction = NODE_ENV === 'production';
 

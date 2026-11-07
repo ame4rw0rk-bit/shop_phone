@@ -16,6 +16,7 @@ const favoriteRoutes = require('./routes/favoriteRoutes');
 const metaRoutes = require('./routes/metaRoutes');
 
 const FRONTEND_DIR = path.join(__dirname, '..', 'frontend');
+const UPLOADS_DIR = path.join(__dirname, 'uploads');
 
 const app = express();
 
@@ -89,6 +90,17 @@ app.use('/api/config', metaRoutes);
 app.use('/api', notFoundHandler);
 
 /* ------------------------- 4. الملفات الساكنة --------------------------- */
+// صور المنتجات المرفوعة
+app.use('/uploads', express.static(UPLOADS_DIR, {
+  dotfiles: 'ignore',
+  etag: true,
+  maxAge: config.isProduction ? '7d' : 0,
+  setHeaders(res) {
+    res.setHeader('Cross-Origin-Resource-Policy', 'same-origin');
+  }
+}));
+
+// ملفات الواجهة
 app.use(express.static(FRONTEND_DIR, {
   dotfiles: 'ignore',
   etag: true,

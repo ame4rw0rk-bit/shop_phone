@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" fill="none">
+  <!-- خلفية شفافة -->
+  
+  <!-- أيقونة الهاتف -->
+  <g transform="translate(320, 150)">
+    <!-- جسم الهاتف -->
+    <rect x="0" y="0" width="160" height="280" rx="20" fill="#0EA5E9" opacity="0.9"/>
+    
+    <!-- الشاشة -->
+    <rect x="15" y="20" width="130" height="240" rx="8" fill="#0EA5E9" opacity="0.3"/>
+    
+    <!-- دائرة الكاميرا -->
+    <circle cx="80" cy="10" r="4" fill="#0EA5E9"/>
+    
+    <!-- زر الصفحة -->
+    <circle cx="80" cy="270" r="6" fill="#0EA5E9" opacity="0.5"/>
+  </g>
+  
+  <!-- النص بالعربي -->
+  <text x="400" y="480" font-family="Tajawal, Arial, sans-serif" font-size="48" font-weight="bold" fill="#0EA5E9" text-anchor="middle">
+    أمير فون و عقيل فون
+  </text>
+  
+  <!-- النص بالإنكليزي -->
+  <text x="400" y="530" font-family="Arial, sans-serif" font-size="28" font-weight="600" fill="#0EA5E9" text-anchor="middle" opacity="0.8">
+    AMIR PHONE & AQEEL PHONE
+  </text>
+</svg>

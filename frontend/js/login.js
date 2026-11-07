@@ -137,6 +137,17 @@
       $('#regPassKey').focus();
       return;
     }
+    // التحقق من كود الاسترجاع: 8-20 حرف بدون فراغات
+    if (payload.Recovery_code.length < 8 || payload.Recovery_code.length > 20) {
+      toast('كود الاسترجاع يجب أن يكون من 8 إلى 20 حرفاً.', 'error');
+      $('#regRecoveryCode').focus();
+      return;
+    }
+    if (/\s/.test(payload.Recovery_code)) {
+      toast('كود الاسترجاع يجب ألا يحتوي على فراغات.', 'error');
+      $('#regRecoveryCode').focus();
+      return;
+    }
     if (payload.pass_key === payload.Recovery_code) {
       toast('كود الاسترجاع يجب أن يختلف عن مفتاح المرور.', 'error');
       return;
@@ -207,6 +218,17 @@
       $('#resetPassKey').focus();
       return;
     }
+    // التحقق من كود الاسترجاع الجديد
+    if (Recovery_code.length < 8 || Recovery_code.length > 20) {
+      toast('كود الاسترجاع الجديد يجب أن يكون من 8 إلى 20 حرفاً.', 'error');
+      $('#newRecoveryCode').focus();
+      return;
+    }
+    if (/\s/.test(Recovery_code)) {
+      toast('كود الاسترجاع يجب ألا يحتوي على فراغات.', 'error');
+      $('#newRecoveryCode').focus();
+      return;
+    }
     if (pass_key === Recovery_code) { toast('يجب أن يختلف الكود عن المفتاح.', 'error'); return; }
 
     button.disabled = true;
@@ -257,10 +279,12 @@
 
     $('#resetGenerate')?.addEventListener('click', () => {
       const input = $('#newRecoveryCode');
-      const bytes = new Uint8Array(12);
+      // توليد كود استرجاع عشوائي بطول 16 حرف (ضمن نطاق 8-20)
+      const bytes = new Uint8Array(8);
       crypto.getRandomValues(bytes);
       input.value = [...bytes].map((b) => b.toString(16).padStart(2, '0')).join('');
       input.dispatchEvent(new Event('input'));
+      toast('تم توليد كود استرجاع عشوائي — احفظه في مكان آمن.', 'info', 6000);
     });
 
     strengthMeter($('#regPassKey'), $('#regStrength'));

@@ -10,9 +10,12 @@
     price: '#fPrice',
     condition: '#fCondition',
     inStock: '#fInStock',
+    imageFile: '#fImageFile',
     imageUrl: '#fImageUrl',
     description: '#fDescription'
   };
+
+  let pendingImageUrl = ''; // الصورة المرفوعة بانتظار الحفظ
 
   /* ------------------------------ الحارس ------------------------------- */
   async function guard() {
@@ -102,7 +105,7 @@
           onerror: (event) => { event.currentTarget.src = window.App.PLACEHOLDER_IMAGE; }
         })),
         el('td', { 'data-label': 'الجهاز' }, el('span', { class: 'table__title', text: product.title })),
-        el('td', { 'data-label': 'السعر' }, el('strong', { text: `$${window.App.money(product.price)}` })),
+        el('td', { 'data-label': 'السعر' }, el('strong', { text: window.App.formatPrice(product.price) })),
         el('td', { 'data-label': 'الحالة' }, el('span', {
           class: `badge ${product.condition === 'used' ? 'badge--used' : 'badge--new'}`,
           text: product.condition === 'used' ? 'مستعمل' : 'جديد'
@@ -134,7 +137,7 @@
       price: $(FIELDS.price).value,
       condition: $(FIELDS.condition).value,
       inStock: $(FIELDS.inStock).value === 'true',
-      imageUrl: $(FIELDS.imageUrl).value.trim(),
+      imageUrl: pendingImageUrl || $(FIELDS.imageUrl).value.trim(),
       description: $(FIELDS.description).value.trim()
     };
   }
@@ -146,15 +149,18 @@
     $(FIELDS.inStock).value = String(product ? product.inStock : true);
     $(FIELDS.imageUrl).value = product?.imageUrl || '';
     $(FIELDS.description).value = product?.description || '';
+    pendingImageUrl = product?.imageUrl || '';
+    // إعادة تعيين حقل الملف
+    $(FIELDS.imageFile).value = '';
     updatePreview();
   }
 
   function updatePreview() {
     const host = $('#imagePreview');
     if (!host) return;
-    const url = $(FIELDS.imageUrl).value.trim();
+    const url = pendingImageUrl || $(FIELDS.imageUrl).value.trim();
     host.textContent = '';
-    if (/^https?:\/\/\S+$/i.test(url)) {
+    if (url) {
       host.append(el('img', {
         src: url, alt: 'معاينة الصورة',
         onerror: () => {
@@ -163,24 +169,88 @@
         }
       }));
     } else {
-      host.append(el('span', { class: 'text-muted', text: url ? 'رابط غير صالح' : 'الصورة الافتراضية ستُستخدم.' }));
+      host.append(el('span', { class: 'text-muted', text: 'لم تختر صورة بعد — ستظهر الصورة الافتراضية.' }));
+    }
+  }
+
+  // رفع الصورة للمسير
+  async function uploadImageFile(file) {
+    if (!file) return null;
+    
+    // التحقق من الحجم (5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast('حجم الصورة يتجاوز 5MB. اختر صورة أصغر.', 'error');
+      return null;
+    }
+    
+    // التحقق من النوع
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif', 'image/bmp'];
+    if (!allowedTypes.includes(file.type)) {
+      toast('نوع الصورة غير مسموح. استخدم JPG أو PNG أو WebP أو GIF.', 'error');
+      return null;
+    }
+    
+    const formData = new FormData();
+    formData.append('image', file);
+    
+    try {
+      const res = await fetch('/api/products/upload', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${store.token}` },
+        body: formData
+      });
+      
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.message || 'فشل رفع الصورة');
+      }
+      
+      const data = await res.json();
+      return data.imageUrl;
+    } catch (error) {
+      toast(error.message || 'تعذّر رفع الصورة.', 'error');
+      return null;
     }
   }
 
   async function submitForm(event) {
     event.preventDefault();
-    const payload = readForm();
     const button = event.submitter || $('#saveProductBtn');
-
-    if (payload.title.length < 2) { toast('اسم الجهاز قصير جداً.', 'error'); return; }
-    if (payload.price === '' || Number(payload.price) < 0) { toast('حدّد سعراً صحيحاً.', 'error'); return; }
-
+    
+    const title = $(FIELDS.title).value.trim();
+    const price = $(FIELDS.price).value;
+    
+    if (title.length < 2) { toast('اسم الجهاز قصير جداً.', 'error'); return; }
+    if (price === '' || Number(price) < 0) { toast('حدّد سعراً صحيحاً.', 'error'); return; }
+    
     button.disabled = true;
+    
     try {
+      // رفع الصورة أولاً إذا اختار المستخدم صورة جديدة
+      const fileInput = $(FIELDS.imageFile);
+      if (fileInput.files && fileInput.files[0]) {
+        const uploadedUrl = await uploadImageFile(fileInput.files[0]);
+        if (uploadedUrl) {
+          pendingImageUrl = uploadedUrl;
+        } else {
+          button.disabled = false;
+          return;
+        }
+      }
+      
+      const payload = {
+        title,
+        price,
+        condition: $(FIELDS.condition).value,
+        inStock: $(FIELDS.inStock).value === 'true',
+        imageUrl: pendingImageUrl,
+        description: $(FIELDS.description).value.trim()
+      };
+      
       const result = state.editingId
         ? await api.updateProduct(state.editingId, payload)
         : await api.createProduct(payload);
-
+      
       toast(result.message, 'success');
       resetForm();
       await load();
@@ -190,6 +260,7 @@
 
   function resetForm() {
     state.editingId = null;
+    pendingImageUrl = '';
     $('#productForm').reset();
     fillForm(null);
     $('#formModeLabel').textContent = 'إضافة جهاز جديد';
@@ -227,7 +298,22 @@
     $('#cancelEditBtn').addEventListener('click', resetForm);
     $('#reloadBtn').addEventListener('click', () => { load(); toast('تم تحديث القائمة.', 'info', 2000); });
 
-    $(FIELDS.imageUrl).addEventListener('input', () => updatePreview());
+    // عند اختيار صورة من الجهاز: عرض المعاينة فوراً
+    $(FIELDS.imageFile).addEventListener('change', (event) => {
+      const file = event.target.files?.[0];
+      if (file) {
+        // عرض معاينة مؤقتة من الملف المحلي
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          pendingImageUrl = e.target.result; // مؤقتاً: data URL
+          updatePreview();
+        };
+        reader.readAsDataURL(file);
+      } else {
+        pendingImageUrl = '';
+        updatePreview();
+      }
+    });
 
     $('#adminSearch').addEventListener('input', (event) => {
       state.search = event.target.value.trim();

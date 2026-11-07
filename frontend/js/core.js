@@ -36,7 +36,13 @@
   const money = (value) => {
     const amount = Number(value);
     if (!Number.isFinite(amount)) return '—';
-    return amount.toLocaleString('en-US', { maximumFractionDigits: 2 });
+    // تنسيق الأرقام بالدينار العراقي مع فارزة الآلاف
+    return amount.toLocaleString('en-US', { maximumFractionDigits: 0 });
+  };
+
+  // دالة مساعدة لعرض السعر بالصيغة الكاملة
+  const formatPrice = (value) => {
+    return `${money(value)} د.ع`;
   };
 
   const PLACEHOLDER_IMAGE = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(
@@ -51,6 +57,8 @@
     </svg>`);
 
   const safeImage = (url) => {
+    // قبول روابط الصور المحلية المرفوعة
+    if (typeof url === 'string' && url.startsWith('/uploads/')) return url;
     if (typeof url === 'string' && /^https?:\/\/\S+$/i.test(url)) return url;
     return PLACEHOLDER_IMAGE;
   };
@@ -104,6 +112,52 @@
     },
     set favorites(ids) { localStorage.setItem('tg_favs', JSON.stringify([...ids])); }
   };
+
+  /* --------------------------- الوضع الليلي (Dark Mode) ---------------------- */
+  const THEME_KEY = 'tg_theme';
+
+  function getTheme() {
+    return localStorage.getItem(THEME_KEY) || 'light';
+  }
+
+  function applyTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem(THEME_KEY, theme);
+    // تحديث لون الـ theme-color في meta tag
+    const metaTheme = document.querySelector('meta[name="theme-color"]');
+    if (metaTheme) {
+      metaTheme.setAttribute('content', theme === 'dark' ? '#0f172a' : '#0B132B');
+    }
+  }
+
+  function toggleTheme() {
+    const current = getTheme();
+    const next = current === 'dark' ? 'light' : 'dark';
+    // إضافة class للانتقال السلس
+    document.body.classList.add('theme-transitioning');
+    applyTheme(next);
+    setTimeout(() => document.body.classList.remove('theme-transitioning'), 400);
+    // تحديث أيقونة الزر
+    updateThemeButton(next);
+  }
+
+  function updateThemeButton(theme) {
+    const btn = document.querySelector('.theme-toggle');
+    if (!btn) return;
+    btn.setAttribute('aria-label', theme === 'dark' ? 'تفعيل الوضع النهاري' : 'تفعيل الوضع الليلي');
+    btn.setAttribute('title', theme === 'dark' ? 'الوضع النهاري ☀️' : 'الوضع الليلي 🌙');
+  }
+
+  function initTheme() {
+    // التحقق من تفضيل النظام
+    const saved = localStorage.getItem(THEME_KEY);
+    if (!saved) {
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      applyTheme(prefersDark ? 'dark' : 'light');
+    } else {
+      applyTheme(saved);
+    }
+  }
 
   const isAdmin = () => decodeToken(store.token)?.role === 'ameer_OxAmeer_admin';
 
@@ -260,7 +314,7 @@
     const message = [
       'مرحباً، أرغب بشراء الجهاز التالي:',
       `• الاسم: ${product.title}`,
-      `• السعر: $${money(product.price)}`,
+      `• السعر: ${formatPrice(product.price)}`,
       `• الحالة: ${product.condition === 'used' ? 'مستعمل' : 'جديد'}`,
       `• الرابط: ${window.location.origin}/?p=${product.id}`
     ].join('\n');
@@ -322,8 +376,8 @@
       product.description ? el('p', { class: 'pcard__desc', text: product.description }) : null,
       el('div', { class: 'pcard__foot' }, [
         el('div', { class: 'price' }, [
-          el('span', { class: 'price__value', text: `$${money(product.price)}` }),
-          el('span', { class: 'price__currency', text: 'دولار أمريكي' })
+          el('span', { class: 'price__value', text: formatPrice(product.price) }),
+          el('span', { class: 'price__currency', text: 'دينار عراقي' })
         ]),
         el('span', { class: 'badge', text: product.inStock ? 'متوفر' : 'نفد' })
       ])
@@ -402,6 +456,19 @@
       el('span', { class: 'icon-btn__count is-empty', 'data-fav-count': '', text: '0' })
     ]);
 
+    // زر تبديل الوضع الليلي
+    const currentTheme = getTheme();
+    const themeToggle = el('button', {
+      type: 'button',
+      class: 'theme-toggle',
+      'aria-label': currentTheme === 'dark' ? 'تفعيل الوضع النهاري' : 'تفعيل الوضع الليلي',
+      title: currentTheme === 'dark' ? 'الوضع النهاري ☀️' : 'الوضع الليلي 🌙'
+    }, [
+      el('span', { class: 'icon-sun', 'aria-hidden': 'true', text: '☀️' }),
+      el('span', { class: 'icon-moon', 'aria-hidden': 'true', text: '🌙' })
+    ]);
+    themeToggle.addEventListener('click', () => toggleTheme());
+
     const burger = el('button', {
       type: 'button',
       class: 'icon-btn burger',
@@ -419,7 +486,7 @@
         el('span', { class: 'logo__text', text: name })
       ]),
       desktopLinks,
-      el('div', { class: 'nav-actions' }, [favLink, authArea, burger])
+      el('div', { class: 'nav-actions' }, [themeToggle, favLink, authArea, burger])
     ]));
 
     mountDrawer(links, active, user);
@@ -452,6 +519,29 @@
     let drawer = $('#mobileDrawer');
     if (drawer) drawer.remove();
 
+    const currentTheme = getTheme();
+    const themeToggleBtn = el('button', {
+      type: 'button',
+      class: 'linklike',
+      'aria-label': currentTheme === 'dark' ? 'تفعيل الوضع النهاري' : 'تفعيل الوضع الليلي'
+    }, [
+      el('span', { 'aria-hidden': 'true', text: currentTheme === 'dark' ? '☀️' : '🌙' }),
+      el('span', { text: currentTheme === 'dark' ? 'الوضع النهاري' : 'الوضع الليلي' })
+    ]);
+    themeToggleBtn.addEventListener('click', () => {
+      toggleTheme();
+      // تحديث نص الزر بعد التبديل
+      const newTheme = getTheme();
+      themeToggleBtn.textContent = '';
+      themeToggleBtn.append(
+        el('span', { 'aria-hidden': 'true', text: newTheme === 'dark' ? '☀️' : '🌙' }),
+        el('span', { text: newTheme === 'dark' ? 'الوضع النهاري' : 'الوضع الليلي' })
+      );
+      themeToggleBtn.setAttribute('aria-label', newTheme === 'dark' ? 'تفعيل الوضع النهاري' : 'تفعيل الوضع الليلي');
+      // تحديث زر الـ navbar أيضاً
+      updateThemeButton(newTheme);
+    });
+
     const panel = el('div', { class: 'drawer__panel', role: 'dialog', 'aria-modal': 'true', 'aria-label': 'قائمة التنقل', id: 'mobileDrawerPanel' }, [
       el('div', { class: 'drawer__head' }, [
         el('strong', { text: 'القائمة' }),
@@ -465,6 +555,8 @@
         class: link.key === active ? 'is-active' : '',
         text: link.label
       })),
+      el('div', { class: 'drawer__section', text: 'المظهر' }),
+      themeToggleBtn,
       el('div', { class: 'drawer__section', text: user ? `مرحباً ${user.username}` : 'حسابي' }),
       user
         ? el('button', { type: 'button', class: 'linklike', dataset: { action: 'logout' }, text: 'تسجيل الخروج' })
@@ -522,17 +614,21 @@
   /* -------------------------------- الإقلاع ----------------------------- */
   const App = {
     el, $, $$, api, request, ApiError,
-    toast, money, store, decodeToken, currentUser, isAdmin, logout,
+    toast, money, formatPrice, store, decodeToken, currentUser, isAdmin, logout,
     safeImage, PLACEHOLDER_IMAGE,
     productCard, renderSkeletons, renderState,
     syncFavoriteIds, toggleFavorite, updateFavBadge,
     mountChrome, renderAuthArea, toggleDrawer, wireGlobalActions,
     orderOnTelegram,
+    getTheme, applyTheme, toggleTheme, initTheme,
     onFavorite: null,
     _config: null
   };
 
   async function boot(options = {}) {
+    // تفعيل الوضع الليلي فوراً (قبل أي طلب شبكة)
+    initTheme();
+
     try {
       App.store.config = await api.config();
     } catch {
