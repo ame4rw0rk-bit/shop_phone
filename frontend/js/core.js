@@ -375,8 +375,7 @@
       product.description ? el('p', { class: 'pcard__desc', text: product.description }) : null,
       el('div', { class: 'pcard__foot' }, [
         el('div', { class: 'price' }, [
-          el('span', { class: 'price__value', text: formatPrice(product.price) }),
-          el('span', { class: 'price__currency', text: 'دينار عراقي' })
+          el('span', { class: 'price__value', text: formatPrice(product.price) })
         ]),
         el('span', { class: 'badge', text: product.inStock ? 'متوفر' : 'نفد' })
       ])

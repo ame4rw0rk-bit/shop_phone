@@ -15,8 +15,7 @@
 
   const SORTS = {
     newest: (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
-    price_asc: (a, b) => a.price - b.price,
-    price_desc: (a, b) => b.price - a.price,
+    oldest: (a, b) => new Date(a.createdAt) - new Date(b.createdAt),
     title: (a, b) => String(a.title).localeCompare(String(b.title), 'ar')
   };
 
@@ -44,8 +43,7 @@
     const sort = el('select', { class: 'select', id: 'sortSelect', 'aria-label': 'ترتيب النتائج' },
       Object.entries({
         newest: 'الأحدث أولاً',
-        price_asc: 'الأرخص أولاً',
-        price_desc: 'الأغلى أولاً',
+        oldest: 'الأقدم أولاً',
         title: 'حسب الاسم'
       }).map(([value, label]) => el('option', { value, text: label })));
 

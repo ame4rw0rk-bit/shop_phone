@@ -134,8 +134,7 @@
     const handle = (store.config.telegramUsername || '').replace(/^@/, '');
     const lines = [
       'مرحباً، أرغب بشراء الأجهزة التالية:',
-      ...items.map((item) => `• ${item.title} — ${window.App.formatPrice(item.price)} (${item.condition === 'used' ? 'مستعمل' : 'جديد'})`),
-      `الإجمالي: ${window.App.formatPrice(items.reduce((sum, item) => sum + Number(item.price || 0), 0))}`
+      ...items.map((item) => `• ${item.title} — ${item.price} (${item.condition === 'used' ? 'مستعمل' : 'جديد'})`)
     ].join('\n');
 
     try {
